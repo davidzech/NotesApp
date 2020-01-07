@@ -1,17 +1,19 @@
 package notes
 
+import "errors"
+
 // NotesDB is a struct
 // Go doesnt have classes, it just has plain data structures
 // And you can define methods associated with a struct
 // its called a struct rather than a class, cuz go has no inheritance whatsoever
 type NotesDB struct {
-	notes map[string]string // store notes by name
+	notes map[int]string // store notes by name
 }
 
 // NewNotesDB creates a new notes db
 func NewNotesDB() *NotesDB {
 	instance := NotesDB{
-		notes: make(map[string]string),
+		notes: make(map[int]string),
 	}
 
 	// var copy NotesDB = instance  // creates a copy of instance
@@ -20,21 +22,31 @@ func NewNotesDB() *NotesDB {
 	return ref // return the address of instance, basically meaning return the pointer that points to instance
 }
 
-// Add adds a note named "name" with the contents "note" to the *NotesDB object "db"
-func (db *NotesDB) Add(name string, note string) {
-	db.notes[name] = note
+var globalCounter int = 0
+
+// Add adds a note named "name" with the contents "note" to the *NotesDB object "db
+// Returns a nil error on success, or an error on failure
+func (db *NotesDB) Add(note string) (int, error) {
+	globalCounter++
+	db.notes[globalCounter] = note
+	return globalCounter, nil
 }
 
-func (db *NotesDB) Update(name string, note string) {
-	db.notes[name] = note
+func (db *NotesDB) Update(id int, note string) {
+	db.notes[id] = note
 }
 
-func (db *NotesDB) Read(name string) string {
-	return db.notes[name]
+func (db *NotesDB) Read(id int) (string, bool) {
+	val, exists := db.notes[id]
+	return val, exists
 }
 
-func (db *NotesDB) Delete(name string) {
-	delete(db.notes, name)
+func (db *NotesDB) Delete(id int) error {
+	if _, exists := db.notes[id]; exists == false {
+		return errors.New("note with id " + string(id) + " does not exist")
+	}
+	delete(db.notes, id)
+	return nil
 }
 
 // in python
@@ -51,8 +63,3 @@ db = NotesDB()
 db.Add("ournote", "i love you")
 
 */
-
-func test() {
-	notesDB := NewNotesDB()
-	notesDB.Add("ournote", "i love you")
-}
