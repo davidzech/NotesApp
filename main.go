@@ -125,6 +125,7 @@ func main() {
 
 	// handle loading the home page
 	// serve HTML so we can have a UI at "/"
+
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	http.ListenAndServe("", router)
