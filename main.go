@@ -20,11 +20,6 @@ import (
 
 var globalDB = notes.NewNotesDB()
 
-type Note struct {
-	ID    int    `json:"id"`
-	Value string `json:"value"`
-}
-
 // HTTP POST - corresponds to creating an item
 // HTTP Post into /notes
 // returns a new notes object
@@ -32,7 +27,7 @@ func handleCreate(w http.ResponseWriter, req *http.Request) {
 	// call into the notes database and create a new one
 	decoder := json.NewDecoder(req.Body) // decodes the JSON data from req.Body
 
-	var note Note
+	var note notes.Note
 	decoder.Decode(&note) // parse req.Body for json data, and populate the fields in n
 	id, _ := globalDB.Add(note.Value)
 	note.ID = id
@@ -57,7 +52,7 @@ func handleRead(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte("not found!"))
 		return
 	}
-	note := Note{
+	note := notes.Note{
 		ID:    id,
 		Value: noteContents,
 	}
@@ -76,7 +71,7 @@ func handleUpdate(w http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(mux.Vars(req)["id"])
 
 	decoder := json.NewDecoder(req.Body) // decodes the JSON data from req.Body
-	var note Note
+	var note notes.Note
 	decoder.Decode(&note)
 
 	globalDB.Update(id, note.Value)
@@ -106,6 +101,15 @@ func handleDelete(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusNoContent) // we aren't returning any data, just delete
 }
 
+func handleFind(w http.ResponseWriter, req *http.Request) {
+	notes := globalDB.Find()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	encoder := json.NewEncoder(w)
+	encoder.Encode(notes)
+}
+
 func main() {
 	router := mux.NewRouter()
 
@@ -114,9 +118,14 @@ func main() {
 	// Our resource here is a Note
 	// and our REST API defines the HTTP endpoints or URLs to manage the full life cycle of managing Note Objects
 	router.HandleFunc("/notes", handleCreate).Methods("POST")
+	router.HandleFunc("/notes", handleFind).Methods("GET") // Find ALL Notes (with some filter criteria)
 	router.HandleFunc("/notes/{id}", handleRead).Methods("GET")
 	router.HandleFunc("/notes/{id}", handleUpdate).Methods("PUT")
 	router.HandleFunc("/notes/{id}", handleDelete).Methods("DELETE")
+
+	// handle loading the home page
+	// serve HTML so we can have a UI at "/"
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	http.ListenAndServe("", router)
 }

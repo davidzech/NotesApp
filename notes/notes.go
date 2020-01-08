@@ -41,6 +41,26 @@ func (db *NotesDB) Read(id int) (string, bool) {
 	return val, exists
 }
 
+type Note struct {
+	ID    int    `json:"id"`
+	Value string `json:"value"`
+}
+
+func (db *NotesDB) Find() []Note {
+	out := []Note{}
+	for k, v := range db.notes {
+		out = append(out, Note{
+			ID:    k,
+			Value: v,
+		})
+	}
+	return out
+}
+
+func (db *NotesDB) FindBy(criteria string) []Note {
+	return nil
+}
+
 func (db *NotesDB) Delete(id int) error {
 	if _, exists := db.notes[id]; exists == false {
 		return errors.New("note with id " + string(id) + " does not exist")
