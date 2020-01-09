@@ -1,29 +1,18 @@
-var app = angular.module('notes');
-
-
-// TODO Build out the NotesService
-// Make NotesController an individual component to include in the home page
-
-// webtutorialApp.factory('NotesService', function($http) {
-//     var notes = {};
-//     // Or put this in a method on the returned object
-//     // if you want to invoke at some point other than load
-//     $http.get('/notes').then(function(response) {
-//         notes = response;
-//     });
-//     return {
-//         getNotes: function() {
-//             return notes;
-//         }
-//     };
-// })
-
-app.component('notesList', {
+angular.module('notes').component('notesList', {
     templateUrl: "modules/notes/notes.template.html",
-    controller: function NotesController($http) {
+    controller: ['Note', function NotesController(Note) { // Dependency Injection. Basically, there's a global registry of registered factories and services, and you can ask for them to be injected
         var $ctrl = this
-        $http.get('/notes').then(function(response) {
-            $ctrl.notes = response.data; // != this.notes
-        });
-    }
+        // Note is literally the $resource() from the factory
+        $ctrl.notes = Note.query();
+
+        $ctrl.addNote = function() {
+            if ($ctrl.noteText) {
+                var n = new Note({value: $ctrl.noteText})
+                var savePromise = n.$save();
+                savePromise.then(function() {
+                    $ctrl.notes.push(n)
+                })
+            }
+        }
+    }]
 })

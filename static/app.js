@@ -1,4 +1,4 @@
-var webtutorialApp = angular.module('webTutorial', ['notes']);
+angular.module('webTutorial', ['notes']);
 
 
 // TODO Build out the NotesService

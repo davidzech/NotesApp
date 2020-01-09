@@ -3,4 +3,11 @@
         <h1>{{ note.id }}</h1>
         <p> {{ note.value }}</p>
     </div>
+
+    <br>
+    <div>
+        <h2>Add a new Note</h2>
+        <input ng-model="$ctrl.noteText"/>
+        <button ng-click="$ctrl.addNote()">Create</button>
+    </div>
 </div>

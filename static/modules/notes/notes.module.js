@@ -1,1 +1,1 @@
-var app = angular.module('notes', []);
+angular.module('notes', ['ngResource']);
