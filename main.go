@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/davidzech/webtutorial/notes"
@@ -67,7 +68,7 @@ func handleRead(w http.ResponseWriter, req *http.Request) {
 // HTTP Put a note at an id /notes/{id_here} - ex /notes/4
 // Accepts a note object
 // Returns a note object with HTTP Status Code 200 (OK)
-func handleUpdate(w http.ResponseWriter, req *http.Request) {
+func handlePut(w http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(mux.Vars(req)["id"])
 
 	decoder := json.NewDecoder(req.Body) // decodes the JSON data from req.Body
@@ -82,6 +83,30 @@ func handleUpdate(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	encoder := json.NewEncoder(w)
 	encoder.Encode(note)
+}
+
+func handleUpdate(w http.ResponseWriter, req *http.Request) {
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+
+	decoder := json.NewDecoder(req.Body) // decodes the JSON data from req.Body
+	var note notes.Note
+	decoder.Decode(&note)
+
+	// first find if id exists
+	if _, exists := globalDB.Read(id); exists == true {
+		globalDB.Update(id, note.Value)
+
+		note.ID = id
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		encoder := json.NewEncoder(w)
+		encoder.Encode(note)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Not found!"))
+	}
+
 }
 
 // HTTP DELETE - deletes an item
@@ -103,6 +128,11 @@ func handleDelete(w http.ResponseWriter, req *http.Request) {
 
 func handleFind(w http.ResponseWriter, req *http.Request) {
 	notes := globalDB.Find()
+	// need to sort notes
+	sort.SliceStable(notes, func(left, right int) bool {
+		// determine if left < right
+		return notes[left].ID < notes[right].ID
+	})
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -120,7 +150,8 @@ func main() {
 	router.HandleFunc("/notes", handleCreate).Methods("POST")
 	router.HandleFunc("/notes", handleFind).Methods("GET") // Find ALL Notes (with some filter criteria)
 	router.HandleFunc("/notes/{id}", handleRead).Methods("GET")
-	router.HandleFunc("/notes/{id}", handleUpdate).Methods("PUT")
+	router.HandleFunc("/notes/{id}", handlePut).Methods("PUT")
+	router.HandleFunc("/notes/{id}", handleUpdate).Methods("POST")
 	router.HandleFunc("/notes/{id}", handleDelete).Methods("DELETE")
 
 	// handle loading the home page

@@ -1,7 +1,9 @@
 <div>
     <div ng-repeat="note in $ctrl.notes">
         <h1>{{ note.id }}</h1>
-        <p> {{ note.value }}</p>
+        <input ng-model="note.value" ng-model-options='{ debounce: 1000 }' ng-change="$ctrl.editNote(note)">
+        <!-- <button ng-click="$ctrl.editNote(note)">Save</button> -->
+        <button ng-click="$ctrl.deleteNote(note)">Delete</button>
     </div>
 
     <br>

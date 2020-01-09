@@ -14,5 +14,19 @@ angular.module('notes').component('notesList', {
                 })
             }
         }
+
+        $ctrl.deleteNote = function(n) {
+            if (n) {
+                n.$remove().then(function() {
+                    $ctrl.notes = $ctrl.notes.filter(item => item !== n)
+                })
+            }
+        }
+
+        $ctrl.editNote = function(n) {
+            if (n) {
+                n.$save()
+            }
+        }
     }]
 })
