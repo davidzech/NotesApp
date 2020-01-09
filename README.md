@@ -9,8 +9,8 @@ We are going to create a basic web application with:
 ## Roadmap
 - [x] Backend
 - [x] Frontend
-- [ ] Documentation with OpenAPI and Postman
-- [ ] PostgresSQL
+- [ ] PostgresSQL or MongoDB
 - [ ] Continuous Integration and Testing with GitHub Actions
 - [ ] Dockerization and Deployment to the Web (on DigitalOcean)
 - [ ] Microservices
+- [ ] Documentation with OpenAPI and Postman
