@@ -38,7 +38,6 @@ func handleCreate(w http.ResponseWriter, req *http.Request) {
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(note)
-
 }
 
 // HTTP GET - corresponds to reading an item
@@ -59,7 +58,7 @@ func handleRead(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	encoder := json.NewEncoder(w)
 	encoder.Encode(note)
 }
@@ -140,7 +139,7 @@ func handleFind(w http.ResponseWriter, req *http.Request) {
 	encoder.Encode(notes)
 }
 
-func main() {
+func createRouter() *mux.Router {
 	router := mux.NewRouter()
 
 	// this style of API Design/Architecture
@@ -153,7 +152,11 @@ func main() {
 	router.HandleFunc("/notes/{id}", handlePut).Methods("PUT")
 	router.HandleFunc("/notes/{id}", handleUpdate).Methods("POST")
 	router.HandleFunc("/notes/{id}", handleDelete).Methods("DELETE")
+	return router
+}
 
+func main() {
+	router := createRouter()
 	// handle loading the home page
 	// serve HTML so we can have a UI at "/"
 

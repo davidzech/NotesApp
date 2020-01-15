@@ -4,6 +4,7 @@ angular.module('notes').component('notesList', {
         var $ctrl = this
         // Note is literally the $resource() from the factory
         $ctrl.notes = Note.query();
+        $ctrl.show = true;
 
         $ctrl.addNote = function() {
             if ($ctrl.noteText) {

@@ -1,9 +1,10 @@
 <div>
-    <div ng-repeat="note in $ctrl.notes">
+    <div ng-repeat="note in $ctrl.notes" >
         <h1>{{ note.id }}</h1>
-        <input ng-model="note.value" ng-model-options='{ debounce: 1000 }' ng-change="$ctrl.editNote(note)">
+        <input ng-model="note.value" ng-model-options='{ debounce: 1000 }' ng-change="$ctrl.editNote(note)" ng-show="$ctrl.show">
         <!-- <button ng-click="$ctrl.editNote(note)">Save</button> -->
         <button ng-click="$ctrl.deleteNote(note)">Delete</button>
+        <input type="checkbox" ng-model="$ctrl.show">
     </div>
 
     <br>
