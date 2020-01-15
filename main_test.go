@@ -13,7 +13,6 @@ import (
 )
 
 func TestNotes(t *testing.T) { // Test Suite is called TestNotes
-	t.FailNow()
 	router := createRouter()
 	t.Run("create", func(t *testing.T) { // one test case
 		recorder := httptest.NewRecorder()
