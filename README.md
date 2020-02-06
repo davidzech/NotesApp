@@ -1,4 +1,4 @@
-# Web Dev Tutorial
+# Notes App
 
 We are going to create a basic web application with:
 
