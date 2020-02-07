@@ -1,6 +1,6 @@
-# Web Dev Tutorial
+# NotesApp
 
-We are going to create a basic web application with:
+We are going to create a basic notes web application with:
 
 - Angularjs (v1) for the frontned
 - Bootstrap for a nice UI theme
